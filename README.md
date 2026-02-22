@@ -43,3 +43,23 @@ In the **Search Parameters** node, you can modify the:
 - **Google Maps Search**: Finds businesses based on your industry and location.
 - **Hunter.io Enrichment**: Extracts professional emails from the business website.
 - **Google Sheets Store**: Saves the gathered data for your sales team.
+
+## Deployment to Render
+
+This project is pre-configured to be deployed on Render with one click.
+
+### 1. Push to GitHub
+Ensure you have pushed all files (`LeadGen_Workflow.json`, `Dockerfile`, `render.yaml`) to your GitHub repository.
+
+### 2. Deploy to Render
+1. Go to the [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** > **Blueprint**.
+3. Connect your GitHub repository.
+4. Render will automatically detect the `render.yaml` file and set up n8n and a PostgreSQL database for you.
+5. Click **Apply**.
+
+### 3. Initialize n8n
+- Once deployed, open your Render URL.
+- Create your admin account.
+- Go to **Workflows** > **Add Workflow** > **Import from File** and select `LeadGen_Workflow.json`.
+- Follow the API configuration steps in the setup section above.
