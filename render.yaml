@@ -9,7 +9,7 @@ services:
       - key: N8N_PORT
         value: 10000
       - key: DB_TYPE
-        value: postgres
+        value: postgresdb
       - key: DB_POSTGRESDB_DATABASE
         fromDatabase:
           name: n8n-db
