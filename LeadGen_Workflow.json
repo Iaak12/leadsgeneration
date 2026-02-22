@@ -1,0 +1,183 @@
+{
+  "name": "Global Lead Generation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "cd0b6b6c-c9f2-4b2a-8d7b-4e6f8a9c0d1e",
+      "name": "Weekly Execution",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        380,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "query": "={{ $json.query }}",
+        "location": "={{ $json.location }}",
+        "limit": 20
+      },
+      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "Google Maps Search",
+      "type": "n8n-nodes-base.googleMaps",
+      "typeVersion": 1,
+      "position": [
+        820,
+        240
+      ],
+      "credentials": {
+        "googleMapsApi": {
+          "id": "google-maps-cred-id"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": [
+          {
+            "name": "query",
+            "value": "website development companies"
+          },
+          {
+            "name": "location",
+            "value": "India"
+          }
+        ]
+      },
+      "id": "e1f2a3b4-c5d6-4e7f-8g9h-0i1j2k3l4m5n",
+      "name": "Search Parameters",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "domainSearch",
+        "domain": "={{ $json.website.split('//')[1].split('/')[0] }}"
+      },
+      "id": "f1g2h3i4-j5k6-4l7m-8n9o-0p1q2r3s4t5u",
+      "name": "Hunter.io Enrichment",
+      "type": "n8n-nodes-base.hunter",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        240
+      ],
+      "credentials": {
+        "hunterIoApi": {
+          "id": "hunter-cred-id"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "your-google-sheet-id",
+          "mode": "id"
+        },
+        "sheetName": "Leads",
+        "values": {
+          "fields": [
+            {
+              "name": "Company Name",
+              "value": "={{ $node[\"Google Maps Search\"].json.name }}"
+            },
+            {
+              "name": "Website",
+              "value": "={{ $node[\"Google Maps Search\"].json.website }}"
+            },
+            {
+              "name": "Phone",
+              "value": "={{ $node[\"Google Maps Search\"].json.formatted_phone_number }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.data.emails[0].value }}"
+            },
+            {
+              "name": "Region",
+              "value": "={{ $node[\"Search Parameters\"].json.location }}"
+            }
+          ]
+        }
+      },
+      "id": "g1h2i3j4-k5l6-4m7n-8o9p-0q1r2s3t4u5v",
+      "name": "Google Sheets Store",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1260,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-cred-id"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Weekly Execution": {
+      "main": [
+        [
+          {
+            "node": "Search Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Parameters": {
+      "main": [
+        [
+          {
+            "node": "Google Maps Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Maps Search": {
+      "main": [
+        [
+          {
+            "node": "Hunter.io Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hunter.io Enrichment": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {}
+}
