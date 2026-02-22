@@ -2,12 +2,13 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Ensure the n8n directory is writable
+# Ensure the n8n directory is writable for the node user
 RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
 
 USER node
 
-# Expose the default n8n port
+# Render handles the port, but we can declare it here for clarity
 EXPOSE 5678
 
-CMD ["n8n"]
+# Use start command to ensure it picks up environment variables correctly
+CMD ["start"]
